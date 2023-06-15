@@ -16,17 +16,20 @@ function updatePopupContent(urls) {
     });
 }
 
+function onCurrentTab(callback) {
+    chrome.tabs.query({ active: true, currentWindow: true },
+                      (tabs) => callback(tabs[0]))
+}
+
 // Retrieve selected URLs for the current tab
 function retrieveFilteredUrls() {
-    chrome.tabs.query({ active: true, currentWindow: true },
-                      function(tabs) {
-                          console.log("current tab query result", tabs)
-                          let tabId = tabs[0].id
-                          const urls = (tabId in bg.filteredUrls) ?
-                                bg.filteredUrls[tabId] : []
-                          console.log("popup render tab", tabId, "urls", urls)
-                          updatePopupContent(urls)
-                      })
+    onCurrentTab(function(tab) {
+        const tabId = tab.id
+        const urls = (tabId in bg.filteredUrls) ?
+              bg.filteredUrls[tabId] : []
+        console.log("popup render tab", tabId, "urls", urls)
+        updatePopupContent(urls)
+    })
 }
 
 // Listen for messages from background.js
