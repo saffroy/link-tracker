@@ -8,7 +8,10 @@ function updatePopupContent(urls) {
         urls = ["None"]
     urls.forEach(url => {
         const listItem = document.createElement("li");
-        listItem.textContent = url;
+        const a = document.createElement("a")
+        a.href = url
+        a.appendChild(document.createTextNode(url))
+        listItem.appendChild(a)
         urlList.appendChild(listItem);
     });
 }
