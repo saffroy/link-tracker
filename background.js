@@ -11,7 +11,7 @@ const requestUrlRegexes = [
 ]
 
 // Store the filtered URLs for each tab
-const filteredUrls = {}; // tabId -> [String]
+const filteredUrls = {}; // tabId -> Set[String]
 
 // Make them readable from popup via background page
 window.filteredUrls = filteredUrls
@@ -31,7 +31,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
         } else {
             // Reset the filtered URLs for the tab
             console.log("matched tab", tabId, tab.url)
-            filteredUrls[tabId] = [];
+            filteredUrls[tabId] = new Set();
             chrome.browserAction.enable(tabId)
         }
     }
@@ -56,7 +56,7 @@ chrome.webRequest.onCompleted.addListener(
             if (matched) {
                 // Store the request URL in the filtered URLs array
                 console.log("matched ressource", url, details)
-                filteredUrls[tabId].push(url);
+                filteredUrls[tabId].add(url);
                 notifyPopup()
             }
         }

@@ -26,7 +26,7 @@ function retrieveFilteredUrls() {
     onCurrentTab(function(tab) {
         const tabId = tab.id
         const urls = (tabId in bg.filteredUrls) ?
-              bg.filteredUrls[tabId] : []
+              Array.from(bg.filteredUrls[tabId]) : []
         console.log("popup render tab", tabId, "urls", urls)
         updatePopupContent(urls)
     })
