@@ -1,19 +1,19 @@
-const bg = chrome.extension.getBackgroundPage();
+const bg = chrome.extension.getBackgroundPage()
 
 function updatePopupContent(urls) {
-    const urlList = document.getElementById("urlList");
-    urlList.innerHTML = "";
+    const urlList = document.getElementById("urlList")
+    urlList.innerHTML = ""
 
     if (urls.length == 0)
         urls = ["None"]
     urls.forEach(url => {
-        const listItem = document.createElement("li");
+        const listItem = document.createElement("li")
         const a = document.createElement("a")
         a.href = url
         a.appendChild(document.createTextNode(url))
         listItem.appendChild(a)
-        urlList.appendChild(listItem);
-    });
+        urlList.appendChild(listItem)
+    })
 }
 
 function onCurrentTab(callback) {
@@ -36,10 +36,10 @@ function retrieveFilteredUrls() {
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.action === "updateUrls") {
         console.log("popup notified of change")
-        retrieveFilteredUrls();
+        retrieveFilteredUrls()
     }
-});
+})
 
 // Trigger the initial retrieval of URLs
 updatePopupContent([])
-retrieveFilteredUrls();
+retrieveFilteredUrls()

@@ -11,14 +11,14 @@ const requestUrlRegexes = [
 ]
 
 // Store the filtered URLs for each tab
-const filteredUrls = {}; // tabId -> Set[String]
+const filteredUrls = {} // tabId -> Set[String]
 
 // Make them readable from popup via background page
 window.filteredUrls = filteredUrls
 
 function notifyPopup() {
     console.log("notifying popup of change")
-    chrome.runtime.sendMessage({ action: "updateUrls" });
+    chrome.runtime.sendMessage({ action: "updateUrls" })
 }
 
 // Event listener for tab updates
@@ -26,24 +26,24 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status === "loading") {
         const matched = pageUrlRegexes.some(regex => regex.test(tab.url))
         if (!matched) {
-            delete filteredUrls[tabId];
+            delete filteredUrls[tabId]
             chrome.browserAction.disable(tabId)
         } else {
             // Reset the filtered URLs for the tab
             console.log("matched tab", tabId, tab.url)
-            filteredUrls[tabId] = new Set();
+            filteredUrls[tabId] = new Set()
             chrome.browserAction.enable(tabId)
         }
     }
-});
+})
 
 // Event listener for tab removal
 chrome.tabs.onRemoved.addListener(function (tabId) {
     // Clean up the filtered URLs for the closed tab
     console.log("drop tab", tabId)
-    delete filteredUrls[tabId];
+    delete filteredUrls[tabId]
     notifyPopup()
-});
+})
 
 // Event listener for completed requests *in all tabs*
 chrome.webRequest.onCompleted.addListener(
@@ -56,11 +56,11 @@ chrome.webRequest.onCompleted.addListener(
             if (matched) {
                 // Store the request URL in the filtered URLs array
                 console.log("matched ressource", url, details)
-                filteredUrls[tabId].add(url);
+                filteredUrls[tabId].add(url)
                 notifyPopup()
             }
         }
     },
     {urls: ["<all_urls>"]},
     []
-);
+)
