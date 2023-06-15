@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
-    "name": "URL Filter Extension",
-    "version": "1.0",
+    "name": "Link Tracker",
+    "version": "0.1",
     "permissions": [
         "tabs",
         "webRequest",
