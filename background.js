@@ -24,15 +24,21 @@ function notifyPopup() {
 // Event listener for tab updates
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status === "loading") {
+        chrome.browserAction.setBadgeBackgroundColor({
+            tabId: tabId, color: "#F00000",
+        })
+
         const matched = pageUrlRegexes.some(regex => regex.test(tab.url))
         if (!matched) {
             delete filteredUrls[tabId]
-            chrome.browserAction.disable(tabId)
+
+            chrome.browserAction.setBadgeText({tabId: tabId, text: ""})
         } else {
             // Reset the filtered URLs for the tab
             console.log("matched tab", tabId, tab.url)
             filteredUrls[tabId] = new Set()
-            chrome.browserAction.enable(tabId)
+
+            chrome.browserAction.setBadgeText({tabId: tabId, text: "0"})
         }
     }
 })
@@ -56,7 +62,11 @@ chrome.webRequest.onCompleted.addListener(
             if (matched) {
                 // Store the request URL in the filtered URLs array
                 console.log("matched ressource", url, details)
-                filteredUrls[tabId].add(url)
+                const s = filteredUrls[tabId]
+                s.add(url)
+
+                chrome.browserAction.setBadgeText({tabId: tabId,
+                                                   text: String(s.size)})
                 notifyPopup()
             }
         }
