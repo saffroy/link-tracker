@@ -6,8 +6,8 @@ const pageUrlRegexes = [
 ]
 
 const requestUrlRegexes = [
-    /\.m3u8/,
-    /\.vtt/,
+    /\.m3u8/i,
+    /\.vtt/i,
 ]
 
 // Store the filtered URLs for each tab
