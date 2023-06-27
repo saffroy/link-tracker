@@ -1,0 +1,50 @@
+WHAT IS LINK TRACKER
+
+Link Tracker is a browser extension for Chrome and Brave. Its purpose
+is to make it a bit easier to find links to ressources accessed by
+your browser.
+
+As of this writing, it reports .VTT and .M3U8 files accessed on any
+page. If need be, it can be improved to detect more file types based
+on user preferences.
+
+HOW TO INSTALL LINK-TRACKER
+
+* Open a browser window (Brave or Chrome)
+
+* Go to the "Extensions" page
+
+* Enable "Developer mode"
+  - IMPORTANT: RELOAD the Extensions page after enabling Developer mode
+  - NOTE: You can disable it again after the extension is installed
+
+* Open the Finder, navigate to the folder containing "link-tracker.crx"
+
+* From Finder, drag the CRX file onto the Extensions page in the browser
+  - This should offer to install the extension, NOT save the file
+    (This happens when you didn't reload after enabling Developer mode)
+
+* Once installed, PIN the extension to the browser bar:
+
+  - In the browser bar, click the Extensions button (shaped like a
+    puzzle piece)
+  - Locate "Link Tracker", and pin it (press the pin-shaped icon)
+    NOTE: you can unpin the extension later if you prefer.
+
+HOW TO USE LINK TRACKER
+
+* Navigate to a web site of interest, for example:
+  https://www3.nhk.or.jp/nhkworld/en/ondemand/video/2054144/
+
+* Start playing the video, and enable subtitles
+
+* Notice the small counter on the extension button: it shows how many
+  links of interest were found.
+  NOTE: this number often changes as scripts on a page load more assets
+
+* Click the extension button: this opens a pop-up window where links
+  are shown.
+
+FEEDBACK
+
+Comments are very welcome.
