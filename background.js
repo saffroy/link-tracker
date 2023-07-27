@@ -51,8 +51,8 @@ chrome.tabs.onRemoved.addListener(function (tabId) {
     notifyPopup()
 })
 
-// Event listener for completed requests *in all tabs*
-chrome.webRequest.onCompleted.addListener(
+// Event listener for new requests *in all tabs*
+chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
         const tabId = details.tabId
 
