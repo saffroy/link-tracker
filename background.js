@@ -1,13 +1,13 @@
 // Regular expression for matching page URLs
 const pageUrlRegexes = [
-    /^https:\/\/(www.?\.)?nhk\.or\.jp\/.*\/ondemand\/video\/.*/,
-    /arte\.tv\/.*\/videos\//,
     /.*/,
 ]
 
 const requestUrlRegexes = [
     /\.m3u8/i,
     /\.vtt/i,
+    /\.mp3/i,
+    /\.mp4/i,
 ]
 
 // Store the filtered URLs for each tab
