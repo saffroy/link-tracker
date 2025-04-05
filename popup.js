@@ -1,5 +1,3 @@
-const bg = chrome.extension.getBackgroundPage()
-
 function updatePopupContent(urls) {
     const urlList = document.getElementById("urlList")
     urlList.innerHTML = ""
@@ -25,19 +23,19 @@ function onCurrentTab(callback) {
 function retrieveFilteredUrls() {
     onCurrentTab(function(tab) {
         const tabId = tab.id
-        const urls = (tabId in bg.filteredUrls) ?
-              Array.from(bg.filteredUrls[tabId]) : []
-        console.log("popup render tab", tabId, "urls", urls)
-        updatePopupContent(urls)
+	const key = `filteredUrls-${tabId}`
+        chrome.storage.session.get([key]).then(result => {
+            const urls = result[key] || []
+            console.log("popup render tab", tabId, "urls", urls)
+            updatePopupContent(urls)
+        })
     })
 }
 
-// Listen for messages from background.js
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.action === "updateUrls") {
-        console.log("popup notified of change")
-        retrieveFilteredUrls()
-    }
+// Listen for storage changes
+chrome.storage.session.onChanged.addListener(function(changes, areaName) {
+    console.log("Storage changed:", changes)
+    retrieveFilteredUrls()
 })
 
 // Trigger the initial retrieval of URLs

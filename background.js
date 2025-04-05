@@ -10,35 +10,26 @@ const requestUrlRegexes = [
     /\.mp4/i,
 ]
 
-// Store the filtered URLs for each tab
-const filteredUrls = {} // tabId -> Set[String]
-
-// Make them readable from popup via background page
-window.filteredUrls = filteredUrls
-
-function notifyPopup() {
-    console.log("notifying popup of change")
-    chrome.runtime.sendMessage({ action: "updateUrls" })
+function storageKey(tabId) {
+    return `filteredUrls-${tabId}`
 }
 
 // Event listener for tab updates
 chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     if (changeInfo.status === "loading") {
-        chrome.browserAction.setBadgeBackgroundColor({
+        chrome.action.setBadgeBackgroundColor({
             tabId: tabId, color: "#F00000",
         })
 
         const matched = pageUrlRegexes.some(regex => regex.test(tab.url))
         if (!matched) {
-            delete filteredUrls[tabId]
-
-            chrome.browserAction.setBadgeText({tabId: tabId, text: ""})
+            chrome.storage.session.remove(storageKey(tabId))
+            chrome.action.setBadgeText({tabId: tabId, text: ""})
         } else {
             // Reset the filtered URLs for the tab
             console.log("matched tab", tabId, tab.url)
-            filteredUrls[tabId] = new Set()
-
-            chrome.browserAction.setBadgeText({tabId: tabId, text: "0"})
+            chrome.storage.session.set({ [storageKey(tabId)]: [] })
+            chrome.action.setBadgeText({tabId: tabId, text: "0"})
         }
     }
 })
@@ -47,29 +38,32 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
 chrome.tabs.onRemoved.addListener(function (tabId) {
     // Clean up the filtered URLs for the closed tab
     console.log("drop tab", tabId)
-    delete filteredUrls[tabId]
-    notifyPopup()
+    chrome.storage.session.remove(storageKey(tabId))
 })
 
 // Event listener for new requests *in all tabs*
 chrome.webRequest.onBeforeRequest.addListener(
     function(details) {
         const tabId = details.tabId
+	const key = storageKey(tabId)
 
-        if (tabId in filteredUrls) {
+        chrome.storage.session.get([key]).then(result => {
+            const currentUrls = result[key] || []
             const url = details.url
-            const matched = requestUrlRegexes.some(regex => regex.test(url) )
-            if (matched) {
+            const matched = requestUrlRegexes.some(regex => regex.test(url))
+
+            if (matched && !currentUrls.includes(url)) {
                 // Store the request URL in the filtered URLs array
                 console.log("matched ressource", url, details)
-                const s = filteredUrls[tabId]
-                s.add(url)
+                const updatedUrls = [...currentUrls, url]
 
-                chrome.browserAction.setBadgeText({tabId: tabId,
-                                                   text: String(s.size)})
-                notifyPopup()
+                chrome.storage.session.set({ [key]: updatedUrls })
+                chrome.action.setBadgeText({
+                    tabId: tabId,
+                    text: String(updatedUrls.length)
+                })
             }
-        }
+        })
     },
     {urls: ["<all_urls>"]},
     []
